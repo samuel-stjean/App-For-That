@@ -392,12 +392,15 @@ int main()
     a10Name.setFillColor(sf::Color::White);
   
     sf::Texture image;
-    image.loadFromFile("Google_Play.png");
+    image.loadFromFile("sadfdafdsa.png");
     sf::Sprite sprite(image);
     sprite.setScale(.1,.1);
+
+   
+
     if (!font.loadFromFile("arial.ttf"))
     {
-        cout << "kys" << endl;
+        cout << "cannot find font" << endl;
     }
 
     sf::Text title;
@@ -607,6 +610,7 @@ int main()
     bool sizeSel = false;
     bool goPress = false;
     bool dsSel = false;
+    
     string theCategory;
     double thePrice = 0;
     double theRating = 0;
@@ -629,6 +633,7 @@ int main()
                 {
                     auto mousePosition = sf::Mouse::getPosition();
                     mousePosition = sf::Mouse::getPosition(window);
+                    
                     sf::FloatRect boxA1 = A1.getGlobalBounds();
                     sf::FloatRect boxA2 = A2.getGlobalBounds();
                     sf::FloatRect boxA3 = A3.getGlobalBounds();
@@ -670,6 +675,7 @@ int main()
                     sf::FloatRect boxReset = reset.getGlobalBounds();
                     sf::FloatRect boxGo = go.getGlobalBounds();
                     sf::Vector2f mousePosFloat(mousePosition.x, mousePosition.y);
+                    
                         if (boxA1.contains(mousePosFloat) && catSel == false)
                         {
                             A1.setOutlineColor(sf::Color::Red);
@@ -953,106 +959,111 @@ int main()
                             ds1.setOutlineColor(sf::Color::Blue);
                             ds2.setOutlineColor(sf::Color::Blue);
                         }
+                        
                         if (boxGo.contains(mousePosFloat))
                         {
+                            
                             if (catSel && rateSel && priceSel && matSel && adSel && iapSel && sizeSel && dsSel) {
+
+                                map<double, vector<App>> appRanks;
+                                MaxHeap heap(100201);
+                                App source(theCategory, thePrice, theRating, contentRating, hasAds, inAppPur, theSize);
+                                string fileName = "DataCategories.csv";
+                                ifstream aFile(fileName);
+                                string line;
+                                getline(aFile, line);
+                                string appName;
+                                string appID;
+                                string category;
+                                string rating;
+                                string ratingCount;
+                                string installs;
+                                string minInstalls;
+                                string maxInstalls;
+                                string free;
+                                string price;
+                                string currency;
+                                string size;
+                                string minimumAndroid;
+                                string developerID;
+                                string developerWebsite;
+                                string developerEmail;
+                                string firstHalfDateAdded;
+                                string secondHalfDateAdded;
+                                string dateAdded;
+                                string firstHalfDateUpdated;
+                                string secondHalfDateUpdated;
+                                string dateUpdated;
+                                string maturityLevel;
+                                string privacyPolicy;
+                                string adSupported;
+                                string inAppPurchases;
+                                string editorsChoice;
+                                string scrapedTime;
+                                string trashString;
+
+                                int count = 0;
+                                vector<string> vec;
+                                if (aFile.is_open())
+                                {
+                                    while (getline(aFile, line) && count <= 100200)
+                                    {
+                                        istringstream stream(line);
+                                        getline(stream, trashString, ',');
+                                        getline(stream, appName, ',');
+                                        getline(stream, appID, ',');
+                                        getline(stream, category, ',');
+                                        getline(stream, rating, ',');
+                                        getline(stream, ratingCount, ',');
+                                        getline(stream, installs, ',');
+                                        getline(stream, minInstalls, ',');
+                                        getline(stream, maxInstalls, ',');
+                                        getline(stream, free, ',');
+                                        getline(stream, price, ',');
+                                        getline(stream, currency, ',');
+                                        getline(stream, size, ',');
+                                        getline(stream, minimumAndroid, ',');
+                                        getline(stream, developerID, ',');
+                                        getline(stream, developerWebsite, ',');
+                                        getline(stream, developerEmail, ',');
+                                        getline(stream, dateAdded, ',');
+                                        getline(stream, dateUpdated, ',');
+                                        getline(stream, maturityLevel, ',');
+                                        getline(stream, privacyPolicy, ',');
+                                        getline(stream, adSupported, ',');
+                                        getline(stream, inAppPurchases, ',');
+                                        getline(stream, editorsChoice, ',');
+                                        getline(stream, scrapedTime, ',');
+
+                                        double tempRating = stod(rating);
+                                        unsigned long long tempRatingCount = stoull(ratingCount);
+                                        unsigned long long tempInstalls = stoull(installs);
+                                        bool tempFree = BoolConv(free);
+                                        double tempPrice = stod(price);
+                                        unsigned long tempSize = ConvertString(size);
+                                        bool tempAds = BoolConv(adSupported);
+                                        bool tempInAppPurchases = BoolConv(inAppPurchases);
+                                        bool tempEditorsChoice = BoolConv(editorsChoice);
+
+                                        App a(appName, category, tempRating, tempRatingCount, tempInstalls, tempFree, tempPrice, currency, tempSize, minimumAndroid, maturityLevel, tempAds, tempInAppPurchases, tempEditorsChoice, 0.0);
+                                        a.Rank(source);
+                                        count++;
+
+                                        
+                                        appRanks[a.GetRank()].push_back(a);
+                                        heap.Insert(a);
+                                        
+                                    }
+
+                                    for (unsigned int i = 0; i < 10; i++) {
+                                        vec.push_back(heap.Extract().GetName());
+                                    }
+                                }
                                 if (theDs == 1)
                                 {
-                                    map<double, vector<App>> appRanks;
-                                    MaxHeap heap(100201);
-                                    App source(theCategory, thePrice, theRating, contentRating, hasAds, inAppPur, theSize);
-                                    string fileName = "DataCategories.csv";
-                                    ifstream aFile(fileName);
-                                    string line;
-                                    getline(aFile, line);
-                                    string appName;
-                                    string appID;
-                                    string category;
-                                    string rating;
-                                    string ratingCount;
-                                    string installs;
-                                    string minInstalls;
-                                    string maxInstalls;
-                                    string free;
-                                    string price;
-                                    string currency;
-                                    string size;
-                                    string minimumAndroid;
-                                    string developerID;
-                                    string developerWebsite;
-                                    string developerEmail;
-                                    string firstHalfDateAdded;
-                                    string secondHalfDateAdded;
-                                    string dateAdded;
-                                    string firstHalfDateUpdated;
-                                    string secondHalfDateUpdated;
-                                    string dateUpdated;
-                                    string maturityLevel;
-                                    string privacyPolicy;
-                                    string adSupported;
-                                    string inAppPurchases;
-                                    string editorsChoice;
-                                    string scrapedTime;
-                                    string trashString;
-
-                                    int count = 0;
-                                    vector<string> vec;
-                                    if (aFile.is_open())
-                                    {
-                                        while (getline(aFile, line) && count <= 100200)
-                                        {
-                                            istringstream stream(line);
-                                            getline(stream, trashString, ',');
-                                            getline(stream, appName, ',');
-                                            getline(stream, appID, ',');
-                                            getline(stream, category, ',');
-                                            getline(stream, rating, ',');
-                                            getline(stream, ratingCount, ',');
-                                            getline(stream, installs, ',');
-                                            getline(stream, minInstalls, ',');
-                                            getline(stream, maxInstalls, ',');
-                                            getline(stream, free, ',');
-                                            getline(stream, price, ',');
-                                            getline(stream, currency, ',');
-                                            getline(stream, size, ',');
-                                            getline(stream, minimumAndroid, ',');
-                                            getline(stream, developerID, ',');
-                                            getline(stream, developerWebsite, ',');
-                                            getline(stream, developerEmail, ',');
-                                            getline(stream, dateAdded, ',');
-                                            getline(stream, dateUpdated, ',');
-                                            getline(stream, maturityLevel, ',');
-                                            getline(stream, privacyPolicy, ',');
-                                            getline(stream, adSupported, ',');
-                                            getline(stream, inAppPurchases, ',');
-                                            getline(stream, editorsChoice, ',');
-                                            getline(stream, scrapedTime, ',');
-
-                                            double tempRating = stod(rating);
-                                            unsigned long long tempRatingCount = stoull(ratingCount);
-                                            unsigned long long tempInstalls = stoull(installs);
-                                            bool tempFree = BoolConv(free);
-                                            double tempPrice = stod(price);
-                                            unsigned long tempSize = ConvertString(size);
-                                            bool tempAds = BoolConv(adSupported);
-                                            bool tempInAppPurchases = BoolConv(inAppPurchases);
-                                            bool tempEditorsChoice = BoolConv(editorsChoice);
-
-                                            App a(appName, category, tempRating, tempRatingCount, tempInstalls, tempFree, tempPrice, currency, tempSize, minimumAndroid, maturityLevel, tempAds, tempInAppPurchases, tempEditorsChoice, 0.0);
-                                            a.Rank(source);
-                                            count++;
-
-                                            appRanks[a.GetRank()].push_back(a);
-                                            heap.Insert(a);
-                                        }
-                                       
-                                        for (unsigned int i = 0; i < 10; i++) {
-                                            vec.push_back(heap.Extract().GetName());
-                                        }
-                                    }
                                     for (int i = 0; i < 10; i++)
                                     {
-                                        string temp =vec[i];
+                                        string temp = vec[i];
 
                                         if (temp.size() > 30)
                                         {
@@ -1062,95 +1073,10 @@ int main()
 
                                     }
                                 }
+
                                 else if (theDs == 2)
                                 {
-                                    map<double, vector<App>> appRanks;
-                                    App source(theCategory, thePrice, theRating, contentRating, hasAds, inAppPur, theSize);
-                                    string fileName = "DataCategories.csv";
-                                    ifstream aFile(fileName);
-                                    string line;
-                                    getline(aFile, line);
-                                    string appName;
-                                    string appID;
-                                    string holdCategory;
-                                    string holdRating;
-                                    string ratingCount;
-                                    string installs;
-                                    string minInstalls;
-                                    string maxInstalls;
-                                    string free;
-                                    string tempPrice;
-                                    string currency;
-                                    string holdSize;
-                                    string minimumAndroid;
-                                    string developerID;
-                                    string developerWebsite;
-                                    string developerEmail;
-                                    string firstHalfDateAdded;
-                                    string secondHalfDateAdded;
-                                    string dateAdded;
-                                    string firstHalfDateUpdated;
-                                    string secondHalfDateUpdated;
-                                    string dateUpdated;
-                                    string maturityLevel;
-                                    string privacyPolicy;
-                                    string adSupported;
-                                    string inAppPurchases;
-                                    string editorsChoice;
-                                    string scrapedTime;
-                                    string trashString;
-
-                                    int count = 0;
-                                    if (aFile.is_open())
-                                    {
-                                        while (getline(aFile, line) && count <= 100200)
-                                        {
-                                            istringstream stream(line);
-                                            getline(stream, trashString, ',');
-                                            getline(stream, appName, ',');
-                                            getline(stream, appID, ',');
-                                            getline(stream, holdCategory, ',');
-                                            getline(stream, holdRating, ',');
-                                            getline(stream, ratingCount, ',');
-                                            getline(stream, installs, ',');
-                                            getline(stream, minInstalls, ',');
-                                            getline(stream, maxInstalls, ',');
-                                            getline(stream, free, ',');
-                                            getline(stream, tempPrice, ',');
-                                            getline(stream, currency, ',');
-                                            getline(stream, holdSize, ',');
-                                            getline(stream, minimumAndroid, ',');
-                                            getline(stream, developerID, ',');
-                                            getline(stream, developerWebsite, ',');
-                                            getline(stream, developerEmail, ',');
-                                            getline(stream, dateAdded, ',');
-                                            getline(stream, dateUpdated, ',');
-                                            getline(stream, maturityLevel, ',');
-                                            getline(stream, privacyPolicy, ',');
-                                            getline(stream, adSupported, ',');
-                                            getline(stream, inAppPurchases, ',');
-                                            getline(stream, editorsChoice, ',');
-                                            getline(stream, scrapedTime, ',');
-
-                                            double tempRating = stod(holdRating);
-                                            unsigned long long tempRatingCount = stoull(ratingCount);
-                                            unsigned long long tempInstalls = stoull(installs);
-                                            bool tempFree = BoolConv(free);
-                                            double thetempPrice = stod(tempPrice);
-                                            unsigned long tempSize = ConvertString(holdSize);
-                                            bool tempAds = BoolConv(adSupported);
-                                            bool tempInAppPurchases = BoolConv(inAppPurchases);
-                                            bool tempEditorsChoice = BoolConv(editorsChoice);
-
-                                            App a(appName, holdCategory, tempRating, tempRatingCount, tempInstalls, tempFree, thetempPrice, currency, tempSize, minimumAndroid, maturityLevel, tempAds, tempInAppPurchases, tempEditorsChoice, 0.0);
-                                            a.Rank(source);
-                                            count++;
-
-                                            appRanks[a.GetRank()].push_back(a);
-                                        }
-
-                                    }
-                                    int count2 = 0;
+                                    int cnt = 0;
                                     vector<string> x;
                                     map<double, vector<App>>::reverse_iterator itr;
                                     for (itr = appRanks.rbegin(); itr != appRanks.rend(); itr++)
@@ -1164,13 +1090,13 @@ int main()
                                                 temp = temp.substr(0, 30);
                                             }
                                             x.push_back(temp);
-                                            count2++;
-                                            if (count2 == 10)
+                                            cnt++;
+                                            if (cnt == 10)
                                             {
                                                 break;
                                             }
                                         }
-                                        if (count2 == 10)
+                                        if (cnt == 10)
                                         {
                                             break;
                                         }
@@ -1184,8 +1110,11 @@ int main()
                                         apps[i] = x[i];
                                     }
                                 }
-                          
                             }
+                            
+
+                   
+                
                             a1Name.setString("App 1: " + apps[0]);
                             a2Name.setString("App 2: " + apps[1]);
                             a3Name.setString("App 3: " + apps[2]);
@@ -1225,15 +1154,16 @@ int main()
                             window.draw(a9Name);
                             window.draw(app10);
                             window.draw(a10Name);
+                            
                             window.display();
                         }
-                       
-                        
-                       
+
                 }
+                
             }
         }
         if (!goPress) {
+
             window.clear();
             window.draw(reset);
             window.draw(rBut);
@@ -1295,7 +1225,9 @@ int main()
             window.draw(ads);
             window.draw(pur);
             window.draw(size);
+            
             window.display();
+
         }
     }
     return 0;
